@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wallet – Personal Expense Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <div class="background-decorations">
+        <div class="floating-coin c1"><i class="fas fa-coins"></i></div>
+        <div class="floating-coin c2"><i class="fas fa-wallet"></i></div>
+        <div class="floating-coin c3"><i class="fas fa-dollar-sign"></i></div>
+    </div>
+    <div id="intro-screen" class="intro-screen">
+        <div class="intro-container">
+            <div class="wallet-wrapper">
+                <div class="wallet-body">
+                    <div class="wallet-back"></div>
+                    <div class="wallet-content">
+                        <div class="pop-item card-gold"><i class="fas fa-credit-card"></i></div>
+                        <div class="pop-item money-green"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="pop-item card-blue"><i class="fas fa-id-card"></i></div>
+                    </div>
+                    <div class="wallet-front">
+                        <div class="wallet-clasp"></div>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="intro-title">Smart Wallet</h1>
+            <h3 class="intro-subtitle">Personal Expense Tracker</h3>
+            <p class="intro-tagline">Track Every Rupee, Build Your Future.</p>
+            <button id="get-started-btn" class="ripple-btn main-cta">
+                Get Started <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+    <div id="app-dashboard" class="dashboard-layout hidden">
+        <!-- Navigation Header -->
+        <header class="app-header glass-card">
+            <div class="logo">
+                <i class="fas fa-wallet icon-accent"></i>
+                <span>Smart<span class="highlight">Wallet</span></span>
+            </div>
+            <nav class="nav-controls">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button id="export-btn" class="btn btn-secondary" title="Export Data to CSV">
+                    <i class="fas fa-file-export"></i> Export CSV
+                </button>
+            </nav>
+        </header>
+        <div id="budget-warning" class="alert-banner hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span><strong>Warning:</strong> Your total expenses have exceeded your income! Time to scale back.</span>
+        </div>
+        <main class="dashboard-grid">
+            <section class="metrics-container">
+                <div class="metric-card glass-card income-border">
+                    <div class="metric-icon"><i class="fas fa-arrow-trend-up"></i></div>
+                    <div class="metric-info">
+                        <h3>Total Income</h3>
+                        <p id="total-income" class="counter">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card glass-card expense-border">
+                    <div class="metric-icon"><i class="fas fa-arrow-trend-down"></i></div>
+                    <div class="metric-info">
+                        <h3>Total Expenses</h3>
+                        <p id="total-expenses" class="counter">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card glass-card balance-border">
+                    <div class="metric-icon"><i class="fas fa-scale-balanced"></i></div>
+                    <div class="metric-info">
+                        <h3>Current Balance</h3>
+                        <p id="current-balance" class="counter">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card glass-card transaction-border">
+                    <div class="metric-icon"><i class="fas fa-list-check"></i></div>
+                    <div class="metric-info">
+                        <h3>Transactions</h3>
+                        <p id="tx-count" class="counter">0</p>
+                        <span id="expense-pct" class="sub-pct">Spent: 0%</span>
+                    </div>
+                </div>
+            </section>
+            <section class="charts-container glass-card">
+                <h3>Visual Analytics</h3>
+                <div class="charts-inner">
+                    <div class="chart-wrapper">
+                        <canvas id="categoryPieChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="monthlyBarChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            <section class="form-container glass-card">
+                <h3 id="form-title">Add Transaction</h3>
+                <form id="transaction-form" autocomplete="off">
+                    <input type="hidden" id="tx-id">
+                    
+                    <div class="form-group">
+                        <label for="tx-amount">Amount (₹) *</label>
+                        <input type="number" id="tx-amount" min="0.01" step="0.01" required placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tx-type">Transaction Type *</label>
+                        <select id="tx-type" required>
+                            <option value="income">Income (+)</option>
+                            <option value="expense" selected>Expense (-)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tx-category">Category *</label>
+                        <select id="tx-category" required>
+                            <option value="Salary">Salary</option>
+                            <option value="Food">Food</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Education">Education</option>
+                            <option value="Medical">Medical</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tx-date">Date *</label>
+                        <input type="date" id="tx-date" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="tx-desc">Description</label>
+                        <input type="text" id="tx-desc" placeholder="e.g., Weekly groceries">
+                    </div>
+
+                    <div class="form-actions full-width">
+                        <button type="button" id="cancel-edit-btn" class="btn btn-secondary hidden">Cancel</button>
+                        <button type="submit" id="submit-btn" class="btn btn-primary ripple-btn">Save Transaction</button>
+                    </div>
+                </form>
+            </section>
+            <section class="ledger-container glass-card">
+                <div class="ledger-header">
+                    <h3>Transaction History</h3>
+                    <div class="ledger-controls">
+                        <input type="text" id="search-bar" placeholder="Search description...">
+                        <select id="filter-type">
+                            <option value="all">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                        <select id="filter-cat">
+                            <option value="all">All Categories</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Food">Food</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Education">Education</option>
+                            <option value="Medical">Medical</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body">
+                        </tbody>
+                    </table>
+                    <div id="empty-state" class="empty-state hidden">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No transactions found matching criteria.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
